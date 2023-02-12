@@ -1,0 +1,26 @@
+---
+- name: Install New Relic Infra Agent
+  hosts: all
+  become: true
+
+  vars:
+    host_name: "{{ inventory_hostname_short }}"
+    license_key: "{{ lookup('env','NEW_RELIC_LICENSE_KEY') }}"
+    team_name: "team1"
+
+  pre_tasks:
+    - name: Check if new relic config already exists
+      ansible.builtin.stat:
+        path: '/etc/newrelic-infra.yml'
+      register: newrelic_config
+
+  roles:
+    - role: newrelic.newrelic-infra
+      vars:
+        nrinfragent_state: latest
+        nrinfragent_config:
+          license_key: "{{ license_key }}"
+          display_name: "{{ host_name }}"
+          custom_attributes:
+            team: "{{ team_name }}"
+      when: not newrelic_config.stat.exists

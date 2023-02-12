@@ -1,0 +1,15 @@
+[Unit]
+Description={{ SERVICE_DESCRIPTION }}
+After=network.target influxd.service
+
+[Service]
+WorkingDirectory={{ WORKING_DIR }}
+ExecStart=/home/{{ USER }}/.pyenv/versions/glances/bin/glances --quiet --export influxdb2
+User={{ USER }}
+Restart=on-failure
+RemainAfterExit=yes
+RestartSec=30s
+TimeoutSec=30s
+
+[Install]
+WantedBy=multi-user.target

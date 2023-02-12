@@ -1,0 +1,48 @@
+## misc
+.DS_Store
+.envrc
+.env
+.vscode/
+*.retry
+*/__pycache__
+*.pyc
+.cache
+.vagrant/
+
+!configs
+configs/*
+!configs/.hyper.js
+!/configs/.nanorc_short
+!/configs/.zshrc
+!/configs/alias.zsh
+!/configs/warp.zsh
+!/configs/powershell.ps1
+!/configs/starship.toml
+
+## docker
+docker/templates/dashy/config.yaml
+docker/templates/dashy/item-icons/
+docker/templates/zabbix/zabbix-server/env_vars/
+
+
+## kubernetes
+kubernetes/manifests/wazuh/
+kubernetes/manifests/gitea/templates/
+kubernetes/manifests/metallb/ansible-k3s/
+kubernetes/manifests/prometheus-operator/dashboards-json/
+kubernetes/manifests/prometheus-operator/secrets/
+
+!kubernetes/manifests/prometheus-operator/configMaps
+kubernetes/manifests/prometheus-operator/configMaps/*
+!kubernetes/manifests/prometheus-operator/configMaps/k8s*
+# *.local.yaml
+
+## terraform
+.terraform*
+plan
+*.tfstate
+*.tfvars
+
+
+
+

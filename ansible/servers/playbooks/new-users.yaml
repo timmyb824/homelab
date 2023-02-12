@@ -1,0 +1,43 @@
+- name: Create new users
+  hosts: all
+  gather_facts: false
+
+  vars:
+    - user: "{{ lookup('env','ssh_user') }}"
+    - remote_user: "{{ lookup('env','ssh_remote_user') }}"
+  # created with:
+  # python -c 'import crypt; print(crypt.crypt("password", "45678Hello23453SomeSalt"))'
+  # above command requires the PassLib library: pip install passlib
+  # will throw a wanrning that password must be encrypted not hashed
+    - password: "{{ lookup('env','ssh_password_encrypted') }}"
+
+  tasks:
+    - name: Create a login user
+      become: yes
+      user:
+        name: "{{ user }}"
+        password: "{{ password }}"
+        groups:
+          - sudo
+        shell: /bin/bash
+        state: present
+    - name: Add public key to authorized_keys
+      become: yes
+      authorized_key:
+        user: "{{ user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_master_key.pub') }}"
+    - name: Create sudoers file
+      become: yes
+      when: remote_user is defined
+      file:
+        path: "/etc/sudoers.d/{{ remote_user}}"
+        state: touch
+    - name: Add remote user to sudoers file
+      become: yes
+      when: remote_user is defined
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers.d/{{ remote_user}}
+        regexp: '^{{ remote_user }}'
+        line: '{{ remote_user }} ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'

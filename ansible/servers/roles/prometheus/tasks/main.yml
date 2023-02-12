@@ -1,0 +1,70 @@
+# tasks file for prometheus
+---
+- name: prometheus | create directories
+  become: true
+  become_user: "{{ user }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+  with_items:
+    - "{{ dir }}/prometheus"
+
+- name: prometheus | prometheus configuration file
+  become: true
+  become_user: "{{ user }}"
+  template:
+    dest: "{{ dir }}/prometheus/prometheus.yml"
+    force: true
+    src: prometheus-prometheus-yml.j2
+    mode: 0700
+  register: prometheus_configuration
+
+- name: docker | docker-compose file
+  become: true
+  become_user: "{{ user }}"
+  template:
+    dest: "{{ dir }}/prometheus/docker-compose.yml"
+    force: true
+    src: docker-docker-compose-yml.j2
+    mode: 0700
+  register: docker_compose_configuration
+
+- name: create docker network and volume
+  become: true
+  become_user: "{{ user }}"
+  shell: "{{ item.cmd }}"
+  with_items:
+    - cmd: 'docker network create {{ prometheus_docker_network}}'
+    - cmd: 'docker volume create {{ prometheus_docker_data_volume }}'
+
+# TODO: need to add check for docker-compose or docker compose versions
+- name: create docker containers
+  become: true
+  become_user: "{{ user }}"
+  shell: "{{ item.cmd }}"
+  with_items:
+    - cmd: 'docker compose up -d'
+  args:
+    chdir: '{{ dir }}/prometheus/'
+
+# - name: prometheus | docker network
+#   become: true
+#   docker_network:
+#     name: "{{ prometheus_docker_network }}"
+#     state: present
+
+# - name: Create a volume
+#   docker_volume:
+#     name: "{{ prometheus_docker_data_volume }}"
+#     state: present
+
+# - name: deploy Docker Compose stack
+#   community.docker.docker_compose:
+#     project_src: "{{ dir }}/prometheus"
+#     files:
+#     - docker-compose.yml
+
+
+
+

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: heimdall-claim
+  name: heimdall-claim
+  namespace: heimdall
+spec:
+  storageClassName: nfs-csi-synologynas
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+status: {}

@@ -1,0 +1,12 @@
+- name: Upgrade apt packages
+  hosts: all
+
+  tasks:
+    - name: Update apt packages
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+      when:
+        - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"

@@ -1,0 +1,9 @@
+---
+# defaults file for glances
+PYTHON_VERSION: 3.10.2
+USER: "{{ ansible_user }}"
+SERVICE_DESCRIPTION: "A service to run and export glances metrics"
+WORKING_DIR: "/home/{{ USER }}/glances"
+influxdb2_org: "{{ lookup('env','influxdb2_org') }}"
+influxdb_user: "{{ lookup('env','influxdb2_user') }}"
+influxdb2_token:  "{{ lookup('env','influxdb2_token') }}"

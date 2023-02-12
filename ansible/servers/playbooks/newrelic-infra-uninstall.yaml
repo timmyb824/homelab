@@ -1,0 +1,27 @@
+---
+- name: Uninstall New Relic Infra Agent
+  hosts: all
+  become: true
+
+  vars:
+    license_key: "{{ lookup('env','NEW_RELIC_LICENSE_KEY') }}"
+
+  pre_tasks:
+    - name: Check if new relic config exists
+      ansible.builtin.stat:
+        path: '/etc/newrelic-infra.yml'
+      register: newrelic_config
+
+  roles:
+    - role: newrelic.newrelic-infra
+      vars:
+        nrinfragent_state: absent
+        nrinfragent_config:
+          license_key: "{{ license_key }}"
+      when: newrelic_config.stat.exists
+
+  post_tasks:
+    - name: Delete new relic config
+      ansible.builtin.file:
+        state: absent
+        path: '/etc/newrelic-infra.yml'

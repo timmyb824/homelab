@@ -1,0 +1,15 @@
+---
+# defaults file for prometheus
+
+# name of host prometheus is being installed on
+host: vm306
+
+# Docker network for prometheus components
+prometheus_docker_network: prometheus
+
+# Volume for prometheus data
+prometheus_docker_data_volume: prometheus_data
+
+# other values
+user: "{{ ansible_user }}"
+dir: "/home/{{ user }}"

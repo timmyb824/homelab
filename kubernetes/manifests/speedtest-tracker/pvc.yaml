@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    io.kompose.service: speedtest-claim
+  name: speedtest-claim
+  namespace: speedtest
+spec:
+  storageClassName: nfs-csi-synologynas
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+status: {}

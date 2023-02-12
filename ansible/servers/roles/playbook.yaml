@@ -1,0 +1,45 @@
+---
+- hosts: all
+  become: true
+
+  vars:
+    python_install: false
+    docker_install: false
+    glances_install: false
+    tailscale_install: false
+    prometheus_install: false
+    checkmk_install: false
+    zabbix_install: false
+
+  roles:
+    - role: python
+      when: python_install | bool
+
+    - role: docker-ce
+      when: docker_install | bool
+
+    - role: glances # make sure to update api token in config
+      when: glances_install | bool
+
+    - role: tailscale-install
+      when: tailscale_install | bool
+
+    - role: prometheus
+      when: prometheus_install | bool
+
+    - role: checkmk-agent
+      when: checkmk_install | bool
+
+    - role: zabbix-agent
+      when: zabbix_install | bool
+
+  pre_tasks:
+    # - name: pause to let vagrant finish
+    #   pause:
+    #     minutes: 3
+    - name: Update and upgrade apt packages
+      become: true
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day

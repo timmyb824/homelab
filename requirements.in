@@ -1,0 +1,6 @@
+pyinfra
+ansible
+zabbix-api
+pip-autoremove
+PyYAML
+ansible-lint

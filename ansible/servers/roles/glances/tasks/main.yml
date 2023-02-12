@@ -1,0 +1,50 @@
+---
+# tasks file for glances
+- name: create directories if they don't exist
+  become: true
+  become_user: "{{ ansible_user }}"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+  loop:
+    - /home/{{ ansible_user }}/.config
+    - /home/{{ ansible_user }}/.config/glances
+    - /home/{{ ansible_user }}/glances
+
+- name: Create glances virtualenv
+  become: true
+  become_user: "{{ ansible_user }}"
+  shell: "{{ item.cmd }}"
+  with_items:
+    - cmd: /home/{{ ansible_user }}/.pyenv/bin/pyenv virtualenv {{ PYTHON_VERSION }} glances && /home/{{ ansible_user }}/.pyenv/bin/pyenv local glances
+  args:
+    chdir: /home/{{ ansible_user }}/glances
+    creates: "/home/{{ ansible_user }}/.pyenv/versions/glances"
+
+- name: install glances dependencies
+  become: true
+  become_user: "{{ ansible_user }}"
+  shell: "{{ item.cmd }}"
+  with_items:
+    - cmd: /home/{{ ansible_user }}/.pyenv/bin/pyenv exec pip install glances docker influxdb influxdb-client bottle
+  args:
+    chdir: /home/{{ ansible_user }}/glances
+
+- name: Copy glances config onto server
+  become: true
+  become_user: "{{ ansible_user }}"
+  copy:
+    src: templates/glances.conf.j2
+    dest: /home/{{ ansible_user }}/.config/glances/glances.conf
+
+- name: Create Glances systemd service file
+  template:
+    src: templates/glances.service.j2
+    dest: /etc/systemd/system/glances.service
+
+- name: Start glances service
+  systemd:
+    name: glances
+    state: started
+    enabled: yes

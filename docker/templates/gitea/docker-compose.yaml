@@ -1,0 +1,42 @@
+version: "3"
+
+networks:
+  gitea:
+    external: false
+
+services:
+  server:
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - GITEA__database__DB_TYPE=postgres
+      - GITEA__database__HOST=db:5432
+      - GITEA__database__NAME=${pg_db_database}
+      - GITEA__database__USER=${pg_db_user}
+      - GITEA__database__PASSWD=${pg_db_password}
+    restart: always
+    networks:
+      - gitea
+    volumes:
+      - ./gitea:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "721:3000"
+      - "222:22"
+  #   depends_on:
+  #     - db
+
+  # db:
+  #   image: postgres:14
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=${pg_db_user}
+  #     - POSTGRES_PASSWORD=${pg_db_password}
+  #     - POSTGRES_DB=${pg_db_database}
+  #   networks:
+  #     - gitea
+  #   volumes:
+  #     - ./postgres:/var/lib/postgresql/data
