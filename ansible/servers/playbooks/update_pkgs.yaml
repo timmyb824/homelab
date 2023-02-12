@@ -10,7 +10,7 @@
         update_cache: yes
         cache_valid_time: 86400 #One day
       when:
-        - ansible_distribution == "Ubuntu"
+        - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
     - name: Update yum packages
       become: true
