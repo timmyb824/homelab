@@ -1,6 +1,6 @@
 # Summary
 
-This mono repo contains all of the tools, scripts, apps, automation's, configs, and other stuff I've used or deployed within my homelab. This is actually a copy of the "real" repo which I host locally via Gitea. For github, I've removed references to secrets and other sensitive information.
+This mono repo contains all of the tools, scripts, apps, automation's, configs, and other stuff I've used and deployed within my homelab. This is actually a copy of the "real" repo which I host locally via Gitea. For github, I've removed references to secrets and other sensitive information.
 
 ## Hardware and Software
 
