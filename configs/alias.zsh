@@ -18,7 +18,7 @@ alias kns='kubens'
 alias ddown='docker-compose down'
 alias dbuild='docker-compose up -d --force-recreate --build'
 alias sshstart='eval `ssh-agent -s`'
-alias sshadd='ssh-add ~/.ssh/id_master_key'
+alias sshadd='ssh-add ~/.ssh/id_rsa_key'
 alias k3s='export KUBECONFIG=/Users/timothybryant/DevOps-Personal/gitea/k3s-cluster/config'
 alias nano='/opt/homebrew/bin/nano' # added to use nano installed with brew
 alias reload="source ~/.zshrc"

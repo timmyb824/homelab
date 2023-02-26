@@ -1,0 +1,22 @@
+# ansible task to check if file exists
+---
+- name: Check if rsyslog file exists
+  ansible.builtin.stat:
+    path: /etc/rsyslog.d/90-graylog.conf
+  register: file_exists
+
+- name: Create rsyslog file
+  ansible.builtin.copy:
+    dest: /etc/rsyslog.d/90-graylog.conf
+    owner: root
+    group: root
+    mode: 0644
+    content: |
+      *.* @192.168.86.132:5140;RSYSLOG_SyslogProtocol23Format
+  when: file_exists.stat.exists == false
+
+- name: Restart rsyslog
+  ansible.builtin.service:
+    name: rsyslog
+    state: restarted
+  when: file_exists.stat.exists == false

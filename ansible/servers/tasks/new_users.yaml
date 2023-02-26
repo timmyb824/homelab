@@ -1,22 +1,9 @@
-- name: Create new users
-  hosts: all
-  gather_facts: false
-
-  vars:
-    - user: "{{ lookup('env','ssh_user') }}"
-    - remote_user: "{{ lookup('env','ssh_remote_user') }}"
-  # created with:
-  # python -c 'import crypt; print(crypt.crypt("password", "45678Hello23453SomeSalt"))'
-  # above command requires the PassLib library: pip install passlib
-  # will throw a wanrning that password must be encrypted not hashed
-    - ssh_password_hashed: "{{ lookup('env','ssh_password_hased') }}"
-
-  tasks:
+---
 - name: Create a login user
   become: true
   ansible.builtin.user:
     name: "{{ users }}"
-    password: "{{ ssh_password_hased }}"
+    password: "{{ ssh_password_encrypted }}"
     groups:
       - sudo
     shell: /bin/bash

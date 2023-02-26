@@ -1,0 +1,84 @@
+- name: Common Playbook
+  hosts: all
+  become: true
+
+  vars_files:
+    - ./vars/common.yaml
+
+  pre_tasks:
+    - name: Play needed pre-tasks in order
+      ansible.builtin.include_tasks: "{{ item }}"
+      loop:
+        - ./tasks/update_pkgs.yaml
+        - ./tasks/new_users.yaml
+  roles:
+    # https://github.com/artis3n/ansible-role-tailscale
+    - role: artis3n.tailscale
+      vars:
+        tailscale_authkey: "{{ lookup('env', 'tailscale_authkey') }}"
+        # tailscale_args: "--ssh"
+
+    # https://github.com/staticdev/ansible-role-pyenv
+    - role: staticdev.pyenv
+      vars:
+        pyenv_version: "HEAD"
+        pyenv_env: "user"
+        pyenv_shellrc_file: "/home/{{ instance_owner }}/.bashrc"
+        pyenv_path: "/home/{{ instance_owner }}/.pyenv"
+        pyenvrc_path: "/home/{{ instance_owner }}"
+        pyenv_owner: "{{ instance_owner }}"
+        pyenv_global:
+          - 3.10.0
+        pyenv_enable_autocompletion: false
+        pyenv_python_versions:
+          - 3.10.0
+        pyenv_virtualenvs:
+          - venv_name: homelab
+            py_version: 3.10.0
+
+    # https://github.com/geerlingguy/ansible-role-docker
+    # docker_daemon_json did not work with this role
+    - role: geerlingguy.docker
+      vars:
+        docker_users:
+          - "{{ instance_owner }}"
+          - "{{ ssh_remote_user }}"
+        docker_daemon_json:
+          log-driver: "gelf"
+          log-opts:
+            gelf-address: "{{ lookup('env','gelf_address') }}"
+          # storage-driver: "devicemapper"
+          # log-opts:
+          #   max-size: "100m"
+
+    # https://github.com/stephdewit/ansible-nvm
+    - role: stephdewit.nvm
+      become: true
+      become_user: "{{ instance_owner }}"
+      vars:
+        nvm_version: 'latest'
+        nvm_node_version: 'latest'
+        nvm_install_path: "/home/{{ instance_owner }}/.nvm"
+        nvm_shell_init_file: "/home/{{ instance_owner }}/.bashrc"
+      environment:
+        NVM_DIR: /home/{{ instance_owner }}/.nvm
+
+    - role: ./roles/prometheus
+      become_user: "{{ instance_owner }}"
+      dependencies:
+        - role: geerlingguy.docker
+      vars:
+        hostname: "pihole2"
+        prom_user: "{{ instance_owner }}"
+
+  tasks:
+    - name: Play needed tasks in order
+      ansible.builtin.include_tasks: "{{ item }}"
+      loop:
+        - ./tasks/rsyslog_graylog.yaml
+
+  post_tasks:
+    - name: Play needed post-tasks in order
+      ansible.builtin.include_tasks: "{{ item }}"
+      loop:
+        - ./tasks/extra_pkgs.yaml

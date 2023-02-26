@@ -1,0 +1,34 @@
+---
+- name: Install extra apt packages
+  become: true
+  ansible.builtin.apt:
+    name:
+      - htop
+      - jq
+      - bat
+      - cpu-checker
+      - magic-wormhole
+      - tree
+      - ripgrep
+      - neofetch
+      - git
+    state: present
+    force_apt_get: true
+  when:
+    - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+
+- name: Install extra packages with yum
+  become: true
+  ansible.builtin.yum:
+    name:
+      - htop
+      - jq
+      - bat
+      - magic-wormhole
+      - tree
+      - ripgrep
+      - git
+    state: present
+  ignore_errors: true
+  when:
+    - ansible_distribution == "Amazon" or ansible_distribution == "CentOS"
