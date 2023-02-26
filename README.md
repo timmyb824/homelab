@@ -8,7 +8,8 @@ Due to space and noise limitations, my homelab consists of the following equipme
 
 * Dell Optiplex 5000 PC (running proxmox cluster)
 * Beelink Mini PC (running proxmox cluster)
-* RasberryPI3 (running pihole for local dns and acts as qdevice for proxmox cluster to have HA)
+* 2nd Beelink Mini PC (running primary pihole for local dns)
+* RasberryPI3 (running backup pihole for local dns and acts as qdevice for proxmox cluster to have HA)
 * Synology NAS (DS416slim)
 * eero6 router & mesh network
 * TP-Link un-managed gig switch

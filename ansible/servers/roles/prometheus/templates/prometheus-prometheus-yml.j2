@@ -3,7 +3,7 @@ global:
 
   # For Prometheus federation
   external_labels:
-    origin_prometheus: {{ host }}
+    origin_prometheus: {{ hostname }}
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
@@ -23,7 +23,7 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: '{{ host }}'
+      replacement: '{{ hostname }}'
 
 
   # Example job for cadvisor
@@ -34,4 +34,4 @@ scrape_configs:
     - source_labels: [__address__]
       regex: '.*'
       target_label: instance
-      replacement: '{{ host }}'
+      replacement: '{{ hostname }}'

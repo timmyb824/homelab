@@ -4,19 +4,19 @@
   tasks:
     - name: Update apt packages
       become: true
-      apt:
+      ansible.builtin.apt:
         name: '*'
         state: latest
-        update_cache: yes
-        cache_valid_time: 86400 #One day
+        update_cache: true
+        cache_valid_time: 86400 # One day
       when:
         - ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
 
     - name: Update yum packages
       become: true
-      yum:
+      ansible.builtin.yum:
         name: '*'
         state: latest
-        update_cache: yes
+        update_cache: true
       when:
         - ansible_distribution == "Amazon"

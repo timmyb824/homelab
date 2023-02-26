@@ -1,69 +1,59 @@
 # tasks file for prometheus
 ---
-- name: prometheus | create directories
-  become: true
-  become_user: "{{ user }}"
+- name: Prometheus | create directories
   file:
     path: "{{ item }}"
     state: directory
     mode: 0700
   with_items:
-    - "{{ dir }}/prometheus"
+    - "/home/{{prom_user}}/prometheus"
 
-- name: prometheus | prometheus configuration file
-  become: true
-  become_user: "{{ user }}"
+- name: Prometheus | prometheus configuration file
   template:
-    dest: "{{ dir }}/prometheus/prometheus.yml"
+    dest: "/home/{{prom_user}}/prometheus/prometheus.yml"
     force: true
     src: prometheus-prometheus-yml.j2
     mode: 0700
   register: prometheus_configuration
 
-- name: docker | docker-compose file
-  become: true
-  become_user: "{{ user }}"
+- name: Docker | docker-compose file
   template:
-    dest: "{{ dir }}/prometheus/docker-compose.yml"
+    dest: "/home/{{prom_user}}/prometheus/docker-compose.yml"
     force: true
     src: docker-docker-compose-yml.j2
     mode: 0700
   register: docker_compose_configuration
 
-- name: create docker network and volume
-  become: true
-  become_user: "{{ user }}"
+- name: Create docker network and volume
   shell: "{{ item.cmd }}"
   with_items:
-    - cmd: 'docker network create {{ prometheus_docker_network}}'
+    - cmd: 'docker network create {{ prometheus_docker_network }}'
     - cmd: 'docker volume create {{ prometheus_docker_data_volume }}'
 
-# TODO: need to add check for docker-compose or docker compose versions
-- name: create docker containers
-  become: true
-  become_user: "{{ user }}"
-  shell: "{{ item.cmd }}"
-  with_items:
-    - cmd: 'docker compose up -d'
+# for older installs of docker-compose
+- name: Check is docker-compose installed
+  shell: command -v docker-compose >/dev/null 2>&1
+  register: is_docker_compose_install
+  ignore_errors: true
+
+- debug: msg="{{ is_docker_compose_install.rc }}" # it returns rc 0 if installed or 127 if not
+- debug: var=is_docker_compose_install
+
+- name: Create docker containers with docker-compose
+  shell: docker-compose up -d --force-recreate
+  ignore_errors: true
+  when: is_docker_compose_install.rc == 0
   args:
-    chdir: '{{ dir }}/prometheus/'
+    chdir: '/home/{{prom_user}}/prometheus/'
 
-# - name: prometheus | docker network
-#   become: true
-#   docker_network:
-#     name: "{{ prometheus_docker_network }}"
-#     state: present
+- name: Create docker containers with docker compose
+  shell: docker compose up -d --force-recreate
+  ignore_errors: true
+  when: is_docker_compose_install.rc != 0
+  args:
+    chdir: '/home/{{prom_user}}/prometheus/'
 
-# - name: Create a volume
-#   docker_volume:
-#     name: "{{ prometheus_docker_data_volume }}"
-#     state: present
 
-# - name: deploy Docker Compose stack
-#   community.docker.docker_compose:
-#     project_src: "{{ dir }}/prometheus"
-#     files:
-#     - docker-compose.yml
 
 
 

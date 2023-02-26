@@ -1,0 +1,18 @@
+awscli_profile = "default"
+region         = "us-east-1"
+instance_type  = "t2.micro"
+subnet_id      = ""
+key_name       = ""
+vpc_id         = ""
+ec2_user       = ""
+# ami_name       = "ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*" # amzn2-ami-hvm-*-gp2 or amzn2-ami-hvm-*-x86_64-ebs
+ami_id         = "ami-09cd747c78a9add63" # use ami-0dfcb1ef8550277af for Amazon Linux 2 or ami-0557a15b87f6559cf  for Ubuntu 22.04 - current id is for Ubuntu 20.04
+tags = {
+  service = "tester",
+  Name    = "test-automation"
+}
+security_group_ids = [""] # can add more than one by adding a comma and the id -  current id is for team-ssh-sg
+ebs_volume_size = "20"
+
+# ansible inputs
+private_key = "~/.ssh/somekey.pem"

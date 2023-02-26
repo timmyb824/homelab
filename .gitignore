@@ -19,6 +19,10 @@ configs/*
 !/configs/powershell.ps1
 !/configs/starship.toml
 
+# ansible
+ansible/servers/secrets/
+ansible/servers/roles/Archive/
+
 ## docker
 docker/templates/dashy/config.yaml
 docker/templates/dashy/item-icons/
@@ -36,11 +40,12 @@ kubernetes/manifests/prometheus-operator/secrets/
 kubernetes/manifests/prometheus-operator/configMaps/*
 !kubernetes/manifests/prometheus-operator/configMaps/k8s*
 # *.local.yaml
+# *.secrets.yaml
 
 ## terraform
 .terraform*
 plan
-*.tfstate
+*.tfstate*
 *.tfvars
 
 
