@@ -4,8 +4,6 @@
 
 Provision New Relic alerting using Terraform. We should strive to create all New Relic alerts using Terraform otherwise manually created alerts will need to be imported so Terraform can manage them.
 
-manually created alerts with needed to imported into Terrafrom so it is aware of the current state and can manage the resources.
-
 ## Installation
 
 Install terraform:
